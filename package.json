@@ -1,0 +1,48 @@
+{
+  "name": "eventhub",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "dev:server": "tsx server/index.ts",
+    "start": "tsx server/index.ts",
+    "start:server": "tsx server/index.ts",
+    "lint": "tsc --noEmit && tsc -p server/tsconfig.json --noEmit",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "backup": "tsx scripts/backup.ts",
+    "seed:local": "tsx scripts/seed-local.ts",
+    "seed:staging": "tsx scripts/seed-staging.ts",
+    "db:migrate": "tsx scripts/migrate.ts",
+    "db:export": "tsx scripts/export-data.ts",
+    "db:import": "tsx scripts/import-data.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.9.0",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "motion": "^12.23.24",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router-dom": "^6.30.1",
+    "tsx": "^4.21.0"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "@types/supertest": "^7.2.0",
+    "@vitejs/plugin-react-swc": "^3.8.0",
+    "@vitest/coverage-v8": "^4.1.4",
+    "supertest": "^7.2.2",
+    "typescript": "^5.7.3",
+    "vite": "^6.1.0",
+    "vitest": "^4.1.4"
+  }
+}
