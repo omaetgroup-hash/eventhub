@@ -4,17 +4,9 @@ services:
     env: node
     buildCommand: npm ci && npm run build
     startCommand: npm run start:server
-    disk:
-      name: eventhub-data
-      mountPath: /var/lib/eventhub
-      sizeGB: 1
     envVars:
       - key: NODE_ENV
         value: production
-      - key: DATABASE_PATH
-        value: /var/lib/eventhub/eventhub.sqlite
-      - key: BACKUP_DIR
-        value: /var/lib/eventhub/backups
       - key: APP_URL
         value: https://eventhub.kopaegroup.com
       - key: CORS_ORIGINS
