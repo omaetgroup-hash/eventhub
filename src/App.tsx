@@ -5,18 +5,7 @@ import RequirePack from './components/RequirePack';
 import RequirePermission from './components/RequirePermission';
 
 const AppShell = lazy(() => import('./components/AppShell'));
-const PublicShell = lazy(() => import('./components/PublicShell'));
-
-const OriginPage = lazy(() => import('./pages/OriginPage'));
 const LoginPage = lazy(() => import('./pages/app/LoginPage'));
-
-const PublicEventsPage = lazy(() => import('./pages/public/PublicEventsPage'));
-const PublicEventDetailPage = lazy(() => import('./pages/public/PublicEventDetailPage'));
-const OrganizerPage = lazy(() => import('./pages/public/OrganizerPage'));
-const PublicVenuePage = lazy(() => import('./pages/public/PublicVenuePage'));
-const WaitingRoomPage = lazy(() => import('./pages/public/WaitingRoomPage'));
-const PublicCheckoutPage = lazy(() => import('./pages/public/PublicCheckoutPage'));
-const CustomerAccountPage = lazy(() => import('./pages/public/CustomerAccountPage'));
 
 const AccessRulesPage = lazy(() => import('./pages/app/AccessRulesPage'));
 const ProtectionReportPage = lazy(() => import('./pages/app/ProtectionReportPage'));
@@ -67,17 +56,14 @@ export default function App() {
   return (
     <Suspense fallback={<RouteLoader />}>
       <Routes>
-        <Route path="/" element={<OriginPage />} />
-
-        <Route element={<PublicShell />}>
-          <Route path="/events" element={<PublicEventsPage />} />
-        <Route path="/events/:id" element={<PublicEventDetailPage />} />
-        <Route path="/checkout/:eventId" element={<PublicCheckoutPage />} />
-        <Route path="/account" element={<CustomerAccountPage />} />
-        <Route path="/organizers/:id" element={<OrganizerPage />} />
-          <Route path="/venues/:id" element={<PublicVenuePage />} />
-          <Route path="/queue/:eventId" element={<WaitingRoomPage />} />
-        </Route>
+        <Route path="/" element={<Navigate to="/app/login" replace />} />
+        <Route path="/events" element={<Navigate to="/app/login" replace />} />
+        <Route path="/events/:id" element={<Navigate to="/app/login" replace />} />
+        <Route path="/checkout/:eventId" element={<Navigate to="/app/login" replace />} />
+        <Route path="/account" element={<Navigate to="/app/login" replace />} />
+        <Route path="/organizers/:id" element={<Navigate to="/app/login" replace />} />
+        <Route path="/venues/:id" element={<Navigate to="/app/login" replace />} />
+        <Route path="/queue/:eventId" element={<Navigate to="/app/login" replace />} />
 
         <Route path="/app/login" element={<LoginPage />} />
         <Route path="/app" element={<RequireAuth />}>
@@ -174,7 +160,7 @@ export default function App() {
           </Route>
         </Route>
 
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<Navigate to="/app/login" replace />} />
       </Routes>
     </Suspense>
   );
