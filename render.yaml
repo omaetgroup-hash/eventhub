@@ -3,7 +3,7 @@ services:
     name: eventhub
     env: node
     buildCommand: npm ci && npm run build
-    startCommand: npm run start:server
+    startCommand: node server-dist/index.js
     envVars:
       - key: NODE_ENV
         value: production
