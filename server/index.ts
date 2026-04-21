@@ -289,12 +289,36 @@ app.post(`${serverEnv.apiBasePath}/auth/request-code`, requireJsonBody({ email: 
 
   const code = randomCode();
   const expiresAt = new Date(Date.now() + serverEnv.authCodeTtlMinutes * 60_000).toISOString();
+  const emailResult = await sendTransactionalEmail('auth_code', email, { code, name: user.name, expiresAt });
+  insertEmailLog({
+    id: `email_${crypto.randomBytes(4).toString('hex')}`,
+    template: 'auth_code',
+    toAddress: email,
+    provider: emailResult.provider,
+    status: emailResult.status,
+    error: emailResult.error,
+  });
+
+  if (emailResult.status !== 'sent') {
+    recordAuthAttempt(email, ipAddress, 'request', false);
+    appendAudit({
+      actor: user.id,
+      action: 'auth.code_request_failed',
+      target: email,
+      severity: 'warning',
+      note: emailResult.error ?? emailResult.provider,
+    });
+    res.status(502).json({
+      error: 'We could not deliver the sign-in code email right now. Please try again shortly.',
+    });
+    return;
+  }
+
   invalidateOutstandingAuthCodes(email);
   createAuthCode(email, code, expiresAt);
   recordAuthAttempt(email, ipAddress, 'request', true);
   appendAudit({ actor: user.id, action: 'auth.code_requested', target: email, severity: 'info', note: ipAddress });
 
-  const emailResult = await sendTransactionalEmail('auth_code', email, { code, name: user.name, expiresAt });
   res.json({
     status: 'sent',
     delivery: emailResult.provider === 'mock' ? 'preview' : 'email',
