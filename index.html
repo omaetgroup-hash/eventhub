@@ -14,6 +14,28 @@
       href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Jost:wght@300;400;500;600&display=swap"
       rel="stylesheet"
     />
+    <script>
+      (() => {
+        if (!('serviceWorker' in navigator) || sessionStorage.getItem('eventhub-sw-reset') === 'done') {
+          return;
+        }
+
+        sessionStorage.setItem('eventhub-sw-reset', 'done');
+
+        navigator.serviceWorker.getRegistrations().then((registrations) => {
+          if (!registrations.length) {
+            return;
+          }
+
+          return Promise.all(registrations.map((registration) => registration.unregister()))
+            .then(() => ('caches' in window ? caches.keys() : Promise.resolve([])))
+            .then((keys) => Promise.all(keys.map((key) => caches.delete(key))))
+            .then(() => window.location.reload());
+        }).catch(() => {
+          sessionStorage.removeItem('eventhub-sw-reset');
+        });
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

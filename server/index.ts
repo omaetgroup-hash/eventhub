@@ -508,6 +508,30 @@ app.post(`${serverEnv.apiBasePath}/admin/orders/:orderId/resend`, requireSession
 
 const distDir = path.resolve(process.cwd(), 'dist');
 if (fs.existsSync(distDir)) {
+  app.get('/service-worker.js', (_req, res) => {
+    res.type('application/javascript');
+    res.setHeader('Cache-Control', 'no-store');
+    res.send(`self.addEventListener('install', (event) => {
+  event.waitUntil(self.skipWaiting());
+});
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil((async () => {
+    const keys = await caches.keys();
+    await Promise.all(keys.map((key) => caches.delete(key)));
+    await self.registration.unregister();
+    const clients = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+    await Promise.all(clients.map((client) => client.navigate(client.url)));
+  })());
+});
+`);
+  });
+
+  app.get('/favicon.ico', (_req, res) => {
+    res.setHeader('Cache-Control', 'public, max-age=300');
+    res.status(204).end();
+  });
+
   app.use(express.static(distDir, {
     index: false,
     redirect: false,
