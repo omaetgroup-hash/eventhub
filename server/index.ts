@@ -508,8 +508,21 @@ app.post(`${serverEnv.apiBasePath}/admin/orders/:orderId/resend`, requireSession
 
 const distDir = path.resolve(process.cwd(), 'dist');
 if (fs.existsSync(distDir)) {
-  app.use(express.static(distDir));
-  app.get(/^\/(?!api).*/, (_req, res) => {
+  app.use(express.static(distDir, {
+    index: false,
+    redirect: false,
+    setHeaders: (res, filePath) => {
+      if (filePath.endsWith('.html')) {
+        res.setHeader('Cache-Control', 'no-store');
+        return;
+      }
+
+      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+    },
+  }));
+
+  app.get(/^\/(?!api)(?!.*\.[^/]+$).*/, (_req, res) => {
+    res.setHeader('Cache-Control', 'no-store');
     res.sendFile(path.join(distDir, 'index.html'));
   });
 }
