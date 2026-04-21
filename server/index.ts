@@ -73,6 +73,7 @@ const corsOptions: cors.CorsOptions = {
 };
 
 const app = express();
+const apiRoutePattern = new RegExp(`^${serverEnv.apiBasePath}(?:/|$)`);
 
 // ─── Security headers ────────────────────────────────────────────────────────
 app.disable('x-powered-by');
@@ -84,8 +85,8 @@ app.use((_req, res, next) => {
   next();
 });
 
-app.use(cors(corsOptions));
-app.options(/.*/, cors(corsOptions));
+app.use(apiRoutePattern, cors(corsOptions));
+app.options(apiRoutePattern, cors(corsOptions));
 app.use(requestLogger);
 
 // Stripe webhook must read the raw body before JSON parsing touches it.
